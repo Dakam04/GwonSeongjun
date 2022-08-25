@@ -8,36 +8,36 @@ namespace Evaluate
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("계산 식을 입력해주세요");
-            evaluate(Console.ReadLine());
-            Console.ReadLine(); // pause
-        }
-        static int evaluate(string formula)
-        {
-            string[] formulaArray = formula.Split(' ');
-            List<string> formulaList = formulaArray.ToList();
 
-            for (int a = 0; a < formulaList.Count; a++) // 괄호 연산
+        static double Calculation(List<string> formulaList)
+        {
+            /*
+            while (true) //제곱 연산자
             {
-
+                int a = 0;
+                if (0 <= formulaList.FindIndex(x => x.Contains("^")))
+                {
+                    a = formulaList.FindIndex(x => x.Contains("^"));
+                    formulaList[a - 1] = (int.Parse(formulaList[a - 1]) ^ int.Parse(formulaList[a + 1])).ToString();
+                    formulaList.RemoveAt(a);
+                    formulaList.RemoveAt(a);
+                }
             }
-
+            */
             while (true) //곱하기 나누기 연산
             {
                 int a = 0;
                 if (0 <= formulaList.FindIndex(x => x.Contains("*"))) //만약 *가 없으면 -1이 반환되서 false
                 {
                     a = formulaList.FindIndex(x => x.Contains("*"));
-                    formulaList[a - 1] = (int.Parse(formulaList[a - 1]) * int.Parse(formulaList[a + 1])).ToString();// n1 + n2 일때 n1에 계산된 값 넣고 +, n2 요소 삭제
+                    formulaList[a - 1] = (double.Parse(formulaList[a - 1]) * double.Parse(formulaList[a + 1])).ToString();// n1 + n2 일때 n1에 계산된 값 넣고 +, n2 요소 삭제
                     formulaList.RemoveAt(a);
                     formulaList.RemoveAt(a);
                 }
                 else if (0 <= formulaList.FindIndex(x => x.Contains("/")))
                 {
-                    a = formulaList.FindIndex(x => x.Contains("/"));    
-                    formulaList[a - 1] = (int.Parse(formulaList[a - 1]) / int.Parse(formulaList[a + 1])).ToString();
+                    a = formulaList.FindIndex(x => x.Contains("/"));
+                    formulaList[a - 1] = (double.Parse(formulaList[a - 1]) / double.Parse(formulaList[a + 1])).ToString();
                     formulaList.RemoveAt(a);
                     formulaList.RemoveAt(a);
                 }
@@ -52,13 +52,13 @@ namespace Evaluate
                 switch (formulaList[a])
                 {
                     case "-":
-                        formulaList[a - 1] = (int.Parse(formulaList[a - 1]) - int.Parse(formulaList[a + 1])).ToString();
+                        formulaList[a - 1] = (double.Parse(formulaList[a - 1]) - double.Parse(formulaList[a + 1])).ToString();
                         formulaList.RemoveAt(a);
                         formulaList.RemoveAt(a);
                         break;
 
                     case "+":
-                        formulaList[a - 1] = (int.Parse(formulaList[a - 1]) + int.Parse(formulaList[a + 1])).ToString();
+                        formulaList[a - 1] = (double.Parse(formulaList[a - 1]) + double.Parse(formulaList[a + 1])).ToString();
                         formulaList.RemoveAt(a);
                         formulaList.RemoveAt(a);
                         break;
@@ -69,11 +69,97 @@ namespace Evaluate
                 }
             }
 
-            for(int a = 0; a < formulaList.Count; a++)
+            return double.Parse(formulaList[0]);
+        }
+
+        static double evaluate(string formula)
+        {
+            while(true)  //sin cos 연산
             {
-                Console.WriteLine(formulaList[a]);
+                if (formula.Contains("sin") || formula.Contains("cos"))
+                {
+                    double tmpNum = 0;
+                    int fstFlag = 0;
+                    int secFlag = 0;
+                    int sinNum = 0;
+                    int cosNum = 0;
+                    int typeNum = 0; // 0은 sin 1은 cos
+                    sinNum = formula.LastIndexOf("sin");
+                    cosNum = formula.LastIndexOf("cos");
+                    typeNum = (sinNum > cosNum) ? 1 : 0;
+                    
+                    if(typeNum == 1 & sinNum != -1)
+                    {
+                        fstFlag = sinNum;
+                        secFlag = fstFlag;
+                        while (formula[secFlag] != ')')
+                        {
+                            secFlag++;
+                        }
+                        tmpNum = Math.Sin(double.Parse(formula.Substring(fstFlag + 4, secFlag - fstFlag - 4)));
+                        formula = formula.Remove(fstFlag, secFlag - fstFlag + 1);
+                        formula = formula.Insert(fstFlag, tmpNum.ToString());
+
+                    }
+                    else if (typeNum == 0 & cosNum != -1)
+                    {
+                        fstFlag = cosNum;
+                        secFlag = fstFlag;
+                        while (formula[secFlag] != ')')
+                        {
+                            secFlag++;
+                        }
+                        tmpNum = Math.Cos(double.Parse(formula.Substring(fstFlag + 4, secFlag - fstFlag - 4)));
+                        formula = formula.Remove(fstFlag, secFlag - fstFlag + 1);
+                        formula = formula.Insert(fstFlag, tmpNum.ToString());
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
-            return 1;
+
+            for (int a = 0; a < formula.Length; a++)  // 괄호 연산
+            {
+                int fstFlag = 0;
+                int secFlag = 0;
+                string tmpFormula;
+
+                if (formula.Contains(")"))
+                {
+                    if (formula[a] == '(') 
+                    {
+                        fstFlag = a;
+                        while (formula[a] != ')')
+                        {
+                            if (formula[a] == '(')
+                            {
+                                fstFlag = a;
+                            }
+                            a++;
+                        }
+                        secFlag = a;
+                        tmpFormula = Calculation(formula.Substring(fstFlag + 1, secFlag - fstFlag - 1).Split(' ').ToList()).ToString();
+                        formula = formula.Remove(fstFlag, secFlag - fstFlag + 1);
+                        formula = formula.Insert(fstFlag, tmpFormula);
+                        a = fstFlag;
+                    }
+                }
+            }
+
+
+            string[] formulaArray = formula.Split(' ');
+            List<string> formulaList = formulaArray.ToList();
+
+            return Calculation(formulaList);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("계산 식을 입력해주세요");
+            Console.WriteLine(evaluate(Console.ReadLine()));
+            Console.ReadLine(); // pause
         }
     }
 }
