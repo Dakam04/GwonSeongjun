@@ -1,7 +1,0 @@
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\bin\Debug\Evaluate.exe.config
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\bin\Debug\Evaluate.exe
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\bin\Debug\Evaluate.pdb
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\obj\Debug\Evaluate.csproj.AssemblyReference.cache
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\obj\Debug\Evaluate.csproj.CoreCompileInputs.cache
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\obj\Debug\Evaluate.exe
-C:\Users\USER\Source\Repos\GwonSeongjun\evaluate\obj\Debug\Evaluate.pdb
